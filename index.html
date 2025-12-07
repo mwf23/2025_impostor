@@ -60,12 +60,12 @@
     }
 
     .btn {
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: 0.1s;
     }
 
@@ -83,6 +83,12 @@
       background: transparent;
       border: 1px solid #0079C8;
       color: #0079C8;
+    }
+
+    .btn-small {
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      margin-left: 4px;
     }
 
     .players-grid {
@@ -107,6 +113,37 @@
       display: flex;
       align-items: center;
       gap: 4px;
+    }
+
+    /* Puntuaciones */
+    .score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 4px 0;
+      flex-wrap: wrap;
+    }
+
+    .score-left {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .score-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .score-value {
+      font-size: 0.9rem;
+    }
+
+    .score-buttons {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
     }
 
     /* MODAL */
@@ -156,7 +193,7 @@
     <div class="section-title">Jugadores</div>
     <div class="row">
       <label>Número (3–10):</label>
-      <input id="numPlayers" type="number" min="3" max="10" value="4">
+      <input id="numPlayers" type="number" min="3" max="10" value="5">
       <button id="btnAplicarJugadores" class="btn btn-ghost">Aplicar</button>
     </div>
 
@@ -194,6 +231,15 @@
     <div id="playersButtons" class="players-grid"></div>
   </div>
 
+  <!-- 🧮 PUNTUACIONES -->
+  <div class="section">
+    <div class="section-title">Puntuaciones</div>
+    <div id="scoresList"></div>
+    <div style="margin-top:8px; text-align:right;">
+      <button id="btnResetScores" class="btn btn-ghost">Reiniciar puntuaciones</button>
+    </div>
+  </div>
+
   <!-- MODAL -->
   <div id="overlay" class="overlay">
     <div class="card">
@@ -222,25 +268,27 @@
   // ===============================
   // ESTADO
   // ===============================
-  let players = [];
-  let roles = {};
+  let players = [];    // { id, name, score }
+  let roles = {};      // id -> "IMPOSTOR" | "SABEDOR"
   let secretWord = "";
   let rolesAssigned = false;
 
-  const numPlayersInput = document.getElementById("numPlayers");
+  const numPlayersInput   = document.getElementById("numPlayers");
   const btnAplicarJugadores = document.getElementById("btnAplicarJugadores");
-  const playersConfigDiv = document.getElementById("playersConfig");
+  const playersConfigDiv  = document.getElementById("playersConfig");
   const playersButtonsDiv = document.getElementById("playersButtons");
+  const scoresListDiv     = document.getElementById("scoresList");
+  const btnResetScores    = document.getElementById("btnResetScores");
 
-  const statusEl = document.getElementById("status");
+  const statusEl   = document.getElementById("status");
   const btnRepartir = document.getElementById("btnRepartir");
 
-  const overlay = document.getElementById("overlay");
+  const overlay    = document.getElementById("overlay");
   const modalTitle = document.getElementById("modalTitle");
-  const modalRole = document.getElementById("modalRole");
-  const modalWord = document.getElementById("modalWord");
-  const modalTip = document.getElementById("modalTip");
-  const btnClose = document.getElementById("btnClose");
+  const modalRole  = document.getElementById("modalRole");
+  const modalWord  = document.getElementById("modalWord");
+  const modalTip   = document.getElementById("modalTip");
+  const btnClose   = document.getElementById("btnClose");
 
   // ===============================
   // NORMALIZAR NÚMERO DE JUGADORES
@@ -258,13 +306,14 @@
   // ===============================
   function initPlayers() {
     const count = getPlayerCount();
+    // Reiniciamos jugadores NUEVOS, puntuación 0
     players = [];
     playersConfigDiv.innerHTML = "";
     playersButtonsDiv.innerHTML = "";
 
     for (let i = 1; i <= count; i++) {
       const name = `Jugador ${i}`;
-      players.push({ id: i, name });
+      players.push({ id: i, name, score: 0 });
 
       // Input de nombre
       const row = document.createElement("div");
@@ -282,6 +331,7 @@
         const p = players.find(p => p.id === i);
         p.name = input.value.trim() || `Jugador ${i}`;
         renderPlayerButtons();
+        renderScores();
       });
 
       row.appendChild(label);
@@ -290,7 +340,9 @@
     }
 
     renderPlayerButtons();
-    statusEl.innerHTML = `Configurados <b>${count}</b> jugadores.`;
+    renderScores();
+    rolesAssigned = false;
+    statusEl.innerHTML = `Configurados <b>${count}</b> jugadores. Pulsa Repartir roles para empezar.`;
   }
 
   // ===============================
@@ -305,6 +357,75 @@
       btn.onclick = () => showRole(p.id);
       playersButtonsDiv.appendChild(btn);
     });
+  }
+
+  // ===============================
+  // PUNTUACIONES
+  // ===============================
+  function renderScores() {
+    scoresListDiv.innerHTML = "";
+    players.forEach(p => {
+      const row = document.createElement("div");
+      row.className = "score-row";
+
+      const left = document.createElement("div");
+      left.className = "score-left";
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "score-name";
+      nameSpan.textContent = p.name;
+
+      const scoreSpan = document.createElement("span");
+      scoreSpan.className = "score-value";
+      scoreSpan.textContent = `(${p.score} pts)`;
+
+      left.appendChild(nameSpan);
+      left.appendChild(scoreSpan);
+
+      const buttonsDiv = document.createElement("div");
+      buttonsDiv.className = "score-buttons";
+
+      const btnPlus1 = document.createElement("button");
+      btnPlus1.className = "btn btn-ghost btn-small";
+      btnPlus1.textContent = "+1";
+      btnPlus1.onclick = () => updateScore(p.id, 1);
+
+      const btnPlus2 = document.createElement("button");
+      btnPlus2.className = "btn btn-ghost btn-small";
+      btnPlus2.textContent = "+2";
+      btnPlus2.onclick = () => updateScore(p.id, 2);
+
+      const btnPlus3 = document.createElement("button");
+      btnPlus3.className = "btn btn-ghost btn-small";
+      btnPlus3.textContent = "+3";
+      btnPlus3.onclick = () => updateScore(p.id, 3);
+
+      const btnMinus1 = document.createElement("button");
+      btnMinus1.className = "btn btn-ghost btn-small";
+      btnMinus1.textContent = "-1";
+      btnMinus1.onclick = () => updateScore(p.id, -1);
+
+      buttonsDiv.appendChild(btnPlus1);
+      buttonsDiv.appendChild(btnPlus2);
+      buttonsDiv.appendChild(btnPlus3);
+      buttonsDiv.appendChild(btnMinus1);
+
+      row.appendChild(left);
+      row.appendChild(buttonsDiv);
+      scoresListDiv.appendChild(row);
+    });
+  }
+
+  function updateScore(id, delta) {
+    const p = players.find(p => p.id === id);
+    if (!p) return;
+    p.score += delta;
+    renderScores();
+  }
+
+  function resetScores() {
+    players.forEach(p => p.score = 0);
+    renderScores();
   }
 
   // ===============================
@@ -371,6 +492,7 @@
   // ===============================
   btnAplicarJugadores.onclick = initPlayers;
   btnRepartir.onclick = shuffleRoles;
+  btnResetScores.onclick = resetScores;
 
   // Inicialización
   initPlayers();
