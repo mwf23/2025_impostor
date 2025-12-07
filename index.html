@@ -6,40 +6,208 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 16px;
+    :root {
+      --bg: #050b22;
+      --bg-alt: #0b1235;
+      --card: #121a3b;
+      --card-soft: #141f4a;
+      --accent: #ff6b6b;
+      --accent-soft: rgba(255,107,107,0.12);
+      --primary: #4dabf7;
+      --primary-soft: rgba(77,171,247,0.15);
+      --text: #f5f7ff;
+      --muted: #a3b0e0;
+      --border-subtle: rgba(255,255,255,0.08);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 14px 40px rgba(0,0,0,0.55);
+    }
+
+    * {
       box-sizing: border-box;
-      max-width: 700px;
-      margin-inline: auto;
-      background: #ffffff;
     }
 
-    h1 {
-      text-align: center;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #1b2557 0, #050b22 45%, #020515 100%);
+      color: var(--text);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 980px;
+      position: relative;
+    }
+
+    /* Globo decorativo */
+    .orb {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,107,107,0.2), transparent 70%);
+      filter: blur(4px);
+      top: -150px;
+      right: -100px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .title-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 20px;
+      background: conic-gradient(from 210deg, #ff6b6b, #f59f00, #4dabf7, #ff6b6b);
+      padding: 2px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    }
+
+    .logo-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      background: radial-gradient(circle at 20% 0, #ffffff18, #121a3b 55%, #050b22 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 1.6rem;
-      margin-bottom: 0.3rem;
     }
 
-    .info {
+    .title-text h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-text p {
+      margin: 2px 0 0;
       font-size: 0.9rem;
-      margin-bottom: 1rem;
-      text-align: center;
-      opacity: 0.8;
+      color: var(--muted);
     }
 
-    .section {
+    .header-pill {
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      background: rgba(10, 191, 135, 0.15);
+      border: 1px solid rgba(10, 191, 135, 0.4);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #e3fff7;
+      white-space: nowrap;
+    }
+
+    .header-pill span {
+      font-size: 0.9rem;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.6fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 820px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(45,57,108,0.9));
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 14px 14px 12px;
+      backdrop-filter: blur(20px);
+    }
+
+    .card + .card {
       margin-top: 10px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #F5F7FA;
     }
 
-    .section-title {
-      font-size: 1rem;
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.98rem;
       font-weight: 600;
-      margin-bottom: 4px;
+    }
+
+    .card-title span.icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      background: rgba(0,0,0,0.2);
+    }
+
+    .card-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      padding: 7px 9px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(5,11,34,0.8);
+      color: var(--text);
+      font-size: 0.86rem;
+      outline: none;
+      min-width: 0;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(77,171,247,0.4);
+    }
+
+    label {
+      font-size: 0.8rem;
+      color: var(--muted);
     }
 
     .row {
@@ -50,69 +218,114 @@
       flex-wrap: wrap;
     }
 
-    input[type="number"],
-    input[type="text"] {
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 0.9rem;
-      flex: 1;
-    }
-
     .btn {
       padding: 8px 12px;
-      border-radius: 8px;
+      border-radius: 999px;
       border: none;
       cursor: pointer;
       font-weight: 600;
-      font-size: 0.85rem;
-      transition: 0.1s;
+      font-size: 0.84rem;
+      transition: transform 0.06s ease-out, box-shadow 0.1s, background 0.1s, opacity 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
 
     .btn-primary {
-      background: #0079C8;
-      color: white;
+      background: linear-gradient(135deg, #4dabf7, #228be6);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
     }
 
     .btn-secondary {
-      background: #0D1846;
-      color: white;
+      background: rgba(15,23,60,1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
     }
 
     .btn-ghost {
       background: transparent;
-      border: 1px solid #0079C8;
-      color: #0079C8;
+      border: 1px solid rgba(77,171,247,0.7);
+      color: var(--primary);
     }
 
     .btn-small {
       padding: 4px 8px;
-      font-size: 0.8rem;
-      margin-left: 4px;
+      font-size: 0.78rem;
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      opacity: 0.9;
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.2);
+      color: var(--muted);
+    }
+
+    .pill.accent {
+      border-color: rgba(255,107,107,0.7);
+      background: var(--accent-soft);
+      color: #ffdede;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      padding: 5px 9px;
+      background: rgba(5,11,34,0.9);
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .chip input {
+      accent-color: var(--primary);
     }
 
     .players-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
       gap: 8px;
-      margin-top: 10px;
+      margin-top: 6px;
     }
 
-    .categories {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    .player-btn {
+      width: 100%;
+      justify-content: center;
+      background: rgba(20,27,70,0.95);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      padding: 9px 10px;
+      border-radius: 12px;
+      font-size: 0.86rem;
     }
 
-    .chip {
-      padding: 5px 10px;
-      background: #fff;
-      border-radius: 999px;
-      border: 1px solid #ccc;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+    .player-btn span {
+      font-size: 0.9rem;
+    }
+
+    .hint {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 4px;
     }
 
     /* Puntuaciones */
@@ -120,9 +333,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin: 4px 0;
+      gap: 10px;
+      margin: 5px 0;
       flex-wrap: wrap;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: rgba(5,11,34,0.9);
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
     .score-left {
@@ -137,13 +354,47 @@
     }
 
     .score-value {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      color: var(--primary);
     }
 
     .score-buttons {
       display: flex;
       gap: 4px;
       flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    /* Votación */
+    .vote-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0;
+      flex-wrap: wrap;
+    }
+
+    .vote-name {
+      min-width: 90px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    select.vote-select {
+      flex: 1;
+      min-width: 120px;
+      font-size: 0.8rem;
+    }
+
+    #roundResult {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(5,11,34,0.9);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
     }
 
     /* MODAL */
@@ -153,150 +404,335 @@
       display: none;
       justify-content: center;
       align-items: center;
-      background: rgba(0,0,0,0.6);
+      background: radial-gradient(circle at top, rgba(77,171,247,0.22), rgba(0,0,0,0.92));
+      z-index: 20;
     }
 
     .overlay.show {
       display: flex;
     }
 
-    .card {
-      background: #F5F7FA;
-      padding: 20px;
-      border-radius: 12px;
+    .card-modal {
+      background: radial-gradient(circle at top, rgba(77,171,247,0.15), rgba(6,8,30,1));
+      padding: 22px 18px 18px;
+      border-radius: 20px;
       width: 90%;
       max-width: 320px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(255,255,255,0.14);
       text-align: center;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-modal::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255,255,255,0.18), transparent 55%),
+        radial-gradient(circle at 120% 120%, rgba(255,107,107,0.28), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .modal-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    #modalTitle {
+      margin: 0 0 4px;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .modal-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: var(--muted);
+      margin-bottom: 10px;
     }
 
     .role {
       font-size: 1.2rem;
-      font-weight: bold;
-      margin: 8px 0;
+      font-weight: 700;
+      margin: 10px 0 6px;
+    }
+
+    .role.impostor {
+      color: var(--accent);
+    }
+
+    .role.sabedor {
+      color: #7ee3ff;
     }
 
     .word {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
+      margin-top: 4px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    #modalTip {
+      font-size: 0.8rem;
+      color: var(--muted);
       margin-top: 8px;
-      font-weight: bold;
+    }
+
+    #btnClose {
+      margin-top: 14px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    footer {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      opacity: 0.8;
     }
   </style>
 </head>
 
 <body>
-  <h1>Juego del Impostor</h1>
-  <div class="info">Cada jugador debe mirar su rol en secreto 👀</div>
+  <div class="orb"></div>
 
-  <!-- ⚙️ CONFIGURACIÓN DE JUGADORES -->
-  <div class="section">
-    <div class="section-title">Jugadores</div>
-    <div class="row">
-      <label>Número (3–10):</label>
-      <input id="numPlayers" type="number" min="3" max="10" value="5">
-      <button id="btnAplicarJugadores" class="btn btn-ghost">Aplicar</button>
-    </div>
+  <div class="app-shell">
+    <header>
+      <div class="title-block">
+        <div class="logo-badge">
+          <div class="logo-inner">
+            🎭
+          </div>
+        </div>
+        <div class="title-text">
+          <h1>Impostor Night <span style="font-size:1rem;opacity:0.8;">β</span></h1>
+          <p>Reparte roles, votad y dejad que la app lleve las puntuaciones.</p>
+        </div>
+      </div>
+      <div class="header-pill">
+        <span>🕵️</span>
+        <span>1 impostor · 3–10 jugadores</span>
+      </div>
+    </header>
 
-    <!-- Inputs de nombres generados dinámicamente -->
-    <div id="playersConfig"></div>
+    <main>
+      <!-- Columna izquierda: configuración, roles, votación -->
+      <div>
+        <!-- Configuración de jugadores -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">⚙️</span>
+                <span>Jugadores</span>
+              </div>
+              <div class="card-sub">Edita número de jugadores y nombres.</div>
+            </div>
+            <span class="pill">Ronda local</span>
+          </div>
+
+          <div class="row">
+            <label for="numPlayers">Número (3–10)</label>
+            <input id="numPlayers" type="number" min="3" max="10" value="5">
+            <button id="btnAplicarJugadores" class="btn btn-ghost">Actualizar</button>
+          </div>
+
+          <div id="playersConfig"></div>
+        </div>
+
+        <!-- Categorías -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">🎯</span>
+                <span>Categorías de palabra</span>
+              </div>
+              <div class="card-sub">El impostor no verá la palabra. Los demás sí.</div>
+            </div>
+          </div>
+          <div class="categories">
+            <label class="chip"><input class="cat" type="checkbox" value="musica" checked> 🎵 Música</label>
+            <label class="chip"><input class="cat" type="checkbox" value="historia"> 🏺 Historia</label>
+            <label class="chip"><input class="cat" type="checkbox" value="geografia"> 🌍 Geografía</label>
+            <label class="chip"><input class="cat" type="checkbox" value="vida"> 🧩 Vida cotidiana</label>
+            <label class="chip"><input class="cat" type="checkbox" value="deportes"> ⚽ Deportes</label>
+            <label class="chip"><input class="cat" type="checkbox" value="naturaleza"> 🌿 Naturaleza</label>
+            <label class="chip"><input class="cat" type="checkbox" value="viajes"> ✈️ Viajes</label>
+          </div>
+        </div>
+
+        <!-- Repartir roles + ver rol -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">🃏</span>
+                <span>Roles de la ronda</span>
+              </div>
+              <div class="card-sub">Reparte y pasa el móvil de mano en mano.</div>
+            </div>
+            <button id="btnRepartir" class="btn btn-primary">
+              <span>🔀</span> <span>Repartir roles</span>
+            </button>
+          </div>
+
+          <div id="status" class="card-sub" style="margin-bottom:6px;">
+            Configura los jugadores y pulsa <b>Repartir roles</b>.
+          </div>
+
+          <div id="playersButtons" class="players-grid"></div>
+          <div class="hint">
+            👉 Cada jugador pulsa su nombre, mira su rol, y toca “Ocultar” antes de devolver el móvil.
+          </div>
+        </div>
+
+        <!-- Votación -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">🗳️</span>
+                <span>Votación de la ronda</span>
+              </div>
+              <div class="card-sub">Cada jugador acusa a quién cree que es el impostor.</div>
+            </div>
+            <span class="pill accent">Auto-cálculo de puntos</span>
+          </div>
+
+          <div id="votesTable"></div>
+
+          <div class="row" style="margin-top:8px; justify-content: space-between;">
+            <button id="btnClearVotes" class="btn btn-secondary btn-small">
+              🧹 Limpiar votos
+            </button>
+            <button id="btnComputeRound" class="btn btn-primary btn-small">
+              ✅ Calcular resultado de ronda
+            </button>
+          </div>
+
+          <div id="roundResult" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Columna derecha: puntuaciones, ayuda -->
+      <div>
+        <!-- Puntuaciones -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">🧮</span>
+                <span>Puntuaciones</span>
+              </div>
+              <div class="card-sub">La app suma puntos automáticamente tras cada votación.</div>
+            </div>
+            <button id="btnResetScores" class="btn btn-ghost btn-small">
+              ♻️ Reiniciar
+            </button>
+          </div>
+
+          <div id="scoresList"></div>
+
+          <div class="hint">
+            Reglas por defecto:
+            <ul style="margin:4px 0 0;padding-left:18px;font-size:0.76rem;color:var(--muted);">
+              <li>Si el impostor es descubierto → cada sabedor que votó bien: <b>+2</b></li>
+              <li>Si el impostor se escapa → impostor: <b>+3</b></li>
+              <li>Puedes ajustar manualmente con los botones +1/+2/+3/−1</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Reglas rápidas -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">📘</span>
+                <span>Cómo se juega</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:0.8rem;color:var(--muted);line-height:1.45;">
+            <ol style="padding-left:18px;margin:0;">
+              <li>Pulsa <b>Repartir roles</b>. Un jugador será el impostor (no ve la palabra).</li>
+              <li>Cada jugador pulsa su nombre y mira su rol en secreto.</li>
+              <li>Jugáis la ronda: todos dais pistas hablando de la palabra sin decirla.</li>
+              <li>Usad la sección de <b>Votación</b> para que cada uno acuse a alguien.</li>
+              <li>Pulsa <b>Calcular resultado</b> y se actualizarán las puntuaciones.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      Imprime pistas, no spoilers. 🕵️‍♂️✨
+    </footer>
   </div>
 
-  <!-- 🎭 CATEGORÍAS -->
-  <div class="section">
-    <div class="section-title">Categorías de palabra</div>
-    <small>Si no marcas ninguna, se usarán todas.</small>
-    <div class="categories">
-      <label class="chip"><input class="cat" type="checkbox" value="musica" checked> Música</label>
-      <label class="chip"><input class="cat" type="checkbox" value="historia"> Historia</label>
-      <label class="chip"><input class="cat" type="checkbox" value="geografia"> Geografía</label>
-      <label class="chip"><input class="cat" type="checkbox" value="vida"> Vida cotidiana</label>
-      <label class="chip"><input class="cat" type="checkbox" value="deportes"> Deportes</label>
-      <label class="chip"><input class="cat" type="checkbox" value="naturaleza"> Naturaleza</label>
-      <label class="chip"><input class="cat" type="checkbox" value="viajes"> Viajes</label>
-    </div>
-  </div>
-
-  <!-- 🔀 REPARTIR -->
-  <div style="text-align:center; margin-top:10px;">
-    <button id="btnRepartir" class="btn btn-primary">🔀 Repartir roles</button>
-  </div>
-
-  <div id="status" style="text-align:center; margin-top:10px;">
-    Configura los jugadores y pulsa <b>Repartir roles</b>.
-  </div>
-
-  <!-- 👤 BOTONES DE JUGADORES -->
-  <div class="section">
-    <div class="section-title">Ver rol</div>
-    <div id="playersButtons" class="players-grid"></div>
-  </div>
-
-  <!-- 🧮 PUNTUACIONES -->
-  <div class="section">
-    <div class="section-title">Puntuaciones</div>
-    <div id="scoresList"></div>
-    <div style="margin-top:8px; text-align:right;">
-      <button id="btnResetScores" class="btn btn-ghost">Reiniciar puntuaciones</button>
-    </div>
-  </div>
-
-  <!-- MODAL -->
+  <!-- MODAL ROL -->
   <div id="overlay" class="overlay">
-    <div class="card">
-      <h3 id="modalTitle"></h3>
-      <div id="modalRole" class="role"></div>
-      <div id="modalWord" class="word"></div>
-      <p id="modalTip"></p>
-      <button id="btnClose" class="btn btn-primary" style="margin-top:16px;">Ocultar</button>
+    <div class="card-modal">
+      <div class="modal-inner">
+        <p id="modalTitle"></p>
+        <div class="modal-tag">
+          <span>👁️</span>
+          <span>Solo tú deberías ver esto</span>
+        </div>
+        <div id="modalRole" class="role"></div>
+        <div id="modalWord" class="word"></div>
+        <p id="modalTip"></p>
+        <button id="btnClose" class="btn btn-primary">👁‍🗨 Ocultar y pasar móvil</button>
+      </div>
     </div>
   </div>
 
 <script>
   // ===============================
-  // DATOS DE PALABRAS POR CATEGORÍA
+  // PALABRAS POR CATEGORÍA (resumidas, ampliables)
   // ===============================
   const WORDS = {
-  musica: [
-    "CONCIERTO","GUITARRA","BATERÍA","MICRÓFONO","DISCO","FESTIVAL","KARAOKE",
-    "CANTANTE","PIANO","BAJO","ESCENARIO","ALTAVOZ","AUDÍFONOS","DJ","VINILO"
-  ],
-
-  historia: [
-    "CASTILLO","IMPERIO","REVOLUCIÓN","BATALLA","MUSEO","PIRÁMIDE","REY",
-    "ESFINGE","GLADIADOR","CRUZADA","COLONIA","ARQUEOLOGÍA","DINASTÍA",
-    "TEMPLO","RUINAS"
-  ],
-
-  geografia: [
-    "MONTAÑA","ISLA","DESIERTO","OCÉANO","FRONTERA","CAPITAL","VOLCÁN",
-    "CATARATA","PENÍNSULA","GLACIAR","ACANTILADO","PÁRAMO","LLANURA",
-    "DELTA","ARRECIFE"
-  ],
-
-  vida: [
-    "SUPERMERCADO","OFICINA","COLEGIO","MÉDICO","AUTOBÚS","RESTAURANTE","PARQUE",
-    "GIMNASIO","CINE","HOSPITAL","BIBLIOTECA","TIENDA","CAFETERÍA","ASCENSOR",
-    "GARAJE"
-  ],
-
-  deportes: [
-    "ESTADIO","BALONCESTO","FÚTBOL","MARATÓN","TENIS","GIMNASIO","NATACIÓN",
-    "CICLISMO","BOXEO","KÁRATE","SENDERISMO","PATINAJE","SURF","ESQUÍ","YOGA"
-  ],
-
-  naturaleza: [
-    "BOSQUE","RÍO","PLAYA","CASCADA","ANIMAL","JARDÍN","CIELO",
-    "SELVA","CIÉNAGA","PRADERA","HIELO","TORMENTA","ARENAL","LAGUNA",
-    "ROCÍO"
-  ],
-
-  viajes: [
-    "AEROPUERTO","HOTEL","MALETA","TREN","CARAVANA","MAPA","CAMPING",
-    "RESERVA","CRUCERO","PASAPORTE","HOSTAL","TAXI","EXCURSIÓN","SOUVENIR",
-    "GUÍA"
-  ]
-};
-
+    musica: [
+      "CONCIERTO","GUITARRA","BATERÍA","MICRÓFONO","DISCO","FESTIVAL","KARAOKE",
+      "PIANO","VIOLÍN","BAJO","ALTAVOZ","AURICULARES","CORO","ORQUESTA"
+    ],
+    historia: [
+      "CASTILLO","IMPERIO","REVOLUCIÓN","BATALLA","MUSEO","PIRÁMIDE","REY",
+      "REINA","CRUZADA","ESCLAVO","DINASTÍA","GLADIADOR","VIKINGO","CORONA"
+    ],
+    geografia: [
+      "MONTAÑA","ISLA","DESIERTO","OCÉANO","FRONTERA","CAPITAL","VOLCÁN",
+      "LAGUNA","VALLE","GLACIAR","FIORDO","PENÍNSULA","LLANURA","DELTA"
+    ],
+    vida: [
+      "SUPERMERCADO","OFICINA","COLEGIO","MÉDICO","AUTOBÚS","RESTAURANTE","PARQUE",
+      "BIBLIOTECA","HOSPITAL","CAFETERÍA","GARAJE","SALÓN","COCINA","DORMITORIO"
+    ],
+    deportes: [
+      "ESTADIO","BALONCESTO","FÚTBOL","MARATÓN","TENIS","GIMNASIO","NATACIÓN",
+      "CARRERA","RUGBY","BALONMANO","CICLISMO","YOGA","BOXEO","VOLEIBOL"
+    ],
+    naturaleza: [
+      "BOSQUE","RÍO","PLAYA","CASCADA","ANIMAL","JARDÍN","CIELO",
+      "NIEVE","TORMENTA","ARCOÍRIS","ROBLE","PINGÜINO","LEÓN","DESIERTO"
+    ],
+    viajes: [
+      "AEROPUERTO","HOTEL","MALETA","TREN","CARAVANA","MAPA","CAMPING",
+      "PASAPORTE","CHECK-IN","CRUCERO","METRO","PEAJE","MOCHILA","SOUVENIR"
+    ]
+  };
 
   // ===============================
   // ESTADO
@@ -306,12 +742,18 @@
   let secretWord = "";
   let rolesAssigned = false;
 
-  const numPlayersInput   = document.getElementById("numPlayers");
+  // ===============================
+  // REFERENCIAS DOM
+  // ===============================
+  const numPlayersInput     = document.getElementById("numPlayers");
   const btnAplicarJugadores = document.getElementById("btnAplicarJugadores");
-  const playersConfigDiv  = document.getElementById("playersConfig");
-  const playersButtonsDiv = document.getElementById("playersButtons");
-  const scoresListDiv     = document.getElementById("scoresList");
-  const btnResetScores    = document.getElementById("btnResetScores");
+  const playersConfigDiv    = document.getElementById("playersConfig");
+  const playersButtonsDiv   = document.getElementById("playersButtons");
+  const scoresListDiv       = document.getElementById("scoresList");
+  const votesTableDiv       = document.getElementById("votesTable");
+  const btnResetScores      = document.getElementById("btnResetScores");
+  const btnClearVotes       = document.getElementById("btnClearVotes");
+  const btnComputeRound     = document.getElementById("btnComputeRound");
 
   const statusEl   = document.getElementById("status");
   const btnRepartir = document.getElementById("btnRepartir");
@@ -322,9 +764,10 @@
   const modalWord  = document.getElementById("modalWord");
   const modalTip   = document.getElementById("modalTip");
   const btnClose   = document.getElementById("btnClose");
+  const roundResult = document.getElementById("roundResult");
 
   // ===============================
-  // NORMALIZAR NÚMERO DE JUGADORES
+  // UTILIDADES
   // ===============================
   function getPlayerCount() {
     let n = parseInt(numPlayersInput.value, 10);
@@ -334,15 +777,25 @@
     return n;
   }
 
+  function chooseWord() {
+    const selected = [...document.querySelectorAll(".cat:checked")].map(cb => cb.value);
+    const categories = selected.length ? selected : Object.keys(WORDS);
+    let pool = [];
+    categories.forEach(cat => pool.push(...(WORDS[cat] || [])));
+    if (!pool.length) pool = ["PALABRA"];
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
   // ===============================
-  // INICIALIZAR JUGADORES
+  // INICIALIZACIÓN DE JUGADORES
   // ===============================
   function initPlayers() {
     const count = getPlayerCount();
-    // Reiniciamos jugadores NUEVOS, puntuación 0
     players = [];
     playersConfigDiv.innerHTML = "";
     playersButtonsDiv.innerHTML = "";
+    scoresListDiv.innerHTML = "";
+    votesTableDiv.innerHTML = "";
 
     for (let i = 1; i <= count; i++) {
       const name = `Jugador ${i}`;
@@ -365,6 +818,7 @@
         p.name = input.value.trim() || `Jugador ${i}`;
         renderPlayerButtons();
         renderScores();
+        renderVotesUI();
       });
 
       row.appendChild(label);
@@ -372,10 +826,13 @@
       playersConfigDiv.appendChild(row);
     }
 
+    rolesAssigned = false;
+    roles = {};
+    secretWord = "";
+    statusEl.innerHTML = `Configurados <b>${count}</b> jugadores. Pulsa Repartir roles para empezar.`;
     renderPlayerButtons();
     renderScores();
-    rolesAssigned = false;
-    statusEl.innerHTML = `Configurados <b>${count}</b> jugadores. Pulsa Repartir roles para empezar.`;
+    renderVotesUI();
   }
 
   // ===============================
@@ -385,8 +842,8 @@
     playersButtonsDiv.innerHTML = "";
     players.forEach(p => {
       const btn = document.createElement("button");
-      btn.className = "btn btn-secondary";
-      btn.textContent = p.name;
+      btn.className = "btn player-btn";
+      btn.innerHTML = `<span>👤</span><span>${p.name}</span>`;
       btn.onclick = () => showRole(p.id);
       playersButtonsDiv.appendChild(btn);
     });
@@ -410,7 +867,7 @@
 
       const scoreSpan = document.createElement("span");
       scoreSpan.className = "score-value";
-      scoreSpan.textContent = `(${p.score} pts)`;
+      scoreSpan.textContent = `${p.score} pts`;
 
       left.appendChild(nameSpan);
       left.appendChild(scoreSpan);
@@ -418,35 +875,28 @@
       const buttonsDiv = document.createElement("div");
       buttonsDiv.className = "score-buttons";
 
-      const btnPlus1 = document.createElement("button");
-      btnPlus1.className = "btn btn-ghost btn-small";
-      btnPlus1.textContent = "+1";
-      btnPlus1.onclick = () => updateScore(p.id, 1);
+      const plus1 = makeScoreBtn("+1", () => updateScore(p.id, 1));
+      const plus2 = makeScoreBtn("+2", () => updateScore(p.id, 2));
+      const plus3 = makeScoreBtn("+3", () => updateScore(p.id, 3));
+      const minus1 = makeScoreBtn("−1", () => updateScore(p.id, -1));
 
-      const btnPlus2 = document.createElement("button");
-      btnPlus2.className = "btn btn-ghost btn-small";
-      btnPlus2.textContent = "+2";
-      btnPlus2.onclick = () => updateScore(p.id, 2);
-
-      const btnPlus3 = document.createElement("button");
-      btnPlus3.className = "btn btn-ghost btn-small";
-      btnPlus3.textContent = "+3";
-      btnPlus3.onclick = () => updateScore(p.id, 3);
-
-      const btnMinus1 = document.createElement("button");
-      btnMinus1.className = "btn btn-ghost btn-small";
-      btnMinus1.textContent = "-1";
-      btnMinus1.onclick = () => updateScore(p.id, -1);
-
-      buttonsDiv.appendChild(btnPlus1);
-      buttonsDiv.appendChild(btnPlus2);
-      buttonsDiv.appendChild(btnPlus3);
-      buttonsDiv.appendChild(btnMinus1);
+      buttonsDiv.appendChild(plus1);
+      buttonsDiv.appendChild(plus2);
+      buttonsDiv.appendChild(plus3);
+      buttonsDiv.appendChild(minus1);
 
       row.appendChild(left);
       row.appendChild(buttonsDiv);
       scoresListDiv.appendChild(row);
     });
+  }
+
+  function makeScoreBtn(label, handler) {
+    const b = document.createElement("button");
+    b.className = "btn btn-ghost btn-small";
+    b.textContent = label;
+    b.onclick = handler;
+    return b;
   }
 
   function updateScore(id, delta) {
@@ -462,24 +912,131 @@
   }
 
   // ===============================
-  // FUSIÓN DE CATEGORÍAS
+  // VOTACIÓN
   // ===============================
-  function chooseWord() {
-    const selected = [...document.querySelectorAll(".cat:checked")].map(cb => cb.value);
-    const categories = selected.length ? selected : Object.keys(WORDS);
+  function renderVotesUI() {
+    votesTableDiv.innerHTML = "";
+    players.forEach(voter => {
+      const row = document.createElement("div");
+      row.className = "vote-row";
 
-    let pool = [];
-    categories.forEach(cat => pool.push(...WORDS[cat]));
+      const nameEl = document.createElement("div");
+      nameEl.className = "vote-name";
+      nameEl.textContent = voter.name;
 
-    return pool[Math.floor(Math.random() * pool.length)];
+      const select = document.createElement("select");
+      select.className = "vote-select";
+      select.dataset.voterId = voter.id;
+
+      const noneOpt = document.createElement("option");
+      noneOpt.value = "";
+      noneOpt.textContent = "Sin voto / Nadie";
+      select.appendChild(noneOpt);
+
+      players.forEach(target => {
+        if (target.id === voter.id) return; // opcional: no votarse a sí mismo
+        const opt = document.createElement("option");
+        opt.value = target.id;
+        opt.textContent = target.name;
+        select.appendChild(opt);
+      });
+
+      row.appendChild(nameEl);
+      row.appendChild(select);
+      votesTableDiv.appendChild(row);
+    });
+  }
+
+  function clearVotes() {
+    const selects = votesTableDiv.querySelectorAll("select.vote-select");
+    selects.forEach(s => s.value = "");
+    roundResult.style.display = "none";
+    roundResult.textContent = "";
+  }
+
+  function computeRound() {
+    if (!rolesAssigned) {
+      alert("Primero reparte roles para esta ronda.");
+      return;
+    }
+    if (!players.length) return;
+
+    const impostor = players.find(p => roles[p.id] === "IMPOSTOR");
+    if (!impostor) {
+      alert("No se ha encontrado impostor en esta ronda. Reparte roles de nuevo.");
+      return;
+    }
+
+    const selects = votesTableDiv.querySelectorAll("select.vote-select");
+    const votes = {}; // targetId -> count
+    const voterChoice = {}; // voterId -> targetId
+
+    selects.forEach(s => {
+      const voterId = parseInt(s.dataset.voterId, 10);
+      const targetVal = s.value;
+      if (!targetVal) return;
+      const targetId = parseInt(targetVal, 10);
+      voterChoice[voterId] = targetId;
+      votes[targetId] = (votes[targetId] || 0) + 1;
+    });
+
+    if (Object.keys(votes).length === 0) {
+      alert("Nadie ha votado todavía. Marca al menos un voto.");
+      return;
+    }
+
+    // encontrar el más votado
+    let maxVotes = 0;
+    let mostVotedIds = [];
+    for (const [targetIdStr, count] of Object.entries(votes)) {
+      const targetId = parseInt(targetIdStr, 10);
+      if (count > maxVotes) {
+        maxVotes = count;
+        mostVotedIds = [targetId];
+      } else if (count === maxVotes) {
+        mostVotedIds.push(targetId);
+      }
+    }
+
+    let resultText = "";
+    let impostorCaught = false;
+
+    if (mostVotedIds.length === 1 && mostVotedIds[0] === impostor.id) {
+      // impostor descubierto
+      impostorCaught = true;
+      // sabedores que votaron bien: +2
+      players.forEach(p => {
+        if (roles[p.id] === "SABEDOR" && voterChoice[p.id] === impostor.id) {
+          p.score += 2;
+        }
+      });
+      resultText =
+        `🕵️‍♂️ El impostor era <b>${impostor.name}</b> y ha sido DESCUBIERTO.<br>` +
+        `Cada sabedor que le ha votado correctamente gana <b>+2 puntos</b>.`;
+    } else {
+      // impostor se escapa
+      impostorCaught = false;
+      const before = impostor.score;
+      impostor.score += 3;
+      resultText =
+        `😈 El impostor era <b>${impostor.name}</b> y se ha ESCAPADO.<br>` +
+        `${impostor.name} gana <b>+3 puntos</b>.`;
+    }
+
+    renderScores();
+    roundResult.style.display = "block";
+    roundResult.innerHTML = resultText;
   }
 
   // ===============================
-  // REPARTIR ROLES
+  // ROLES
   // ===============================
   function shuffleRoles() {
     const n = players.length;
-    if (n < 3) return alert("Necesitas mínimo 3 jugadores.");
+    if (n < 3) {
+      alert("Necesitas mínimo 3 jugadores.");
+      return;
+    }
 
     secretWord = chooseWord();
 
@@ -492,33 +1049,39 @@
     });
 
     rolesAssigned = true;
-    statusEl.innerHTML = `Roles repartidos. Hay <b>${n - 1}</b> sabedores y <b>1 impostor</b>.`;
+    clearVotes();
+    statusEl.innerHTML =
+      `Roles repartidos. Hay <b>${n - 1}</b> sabedores, <b>1 impostor</b>. ` +
+      `Jugad la ronda y luego rellenad la votación.`;
   }
 
-  // ===============================
-  // MOSTRAR ROL EN MODAL
-  // ===============================
   function showRole(id) {
-    if (!rolesAssigned) return alert("Primero reparte roles.");
+    if (!rolesAssigned) {
+      alert("Primero reparte roles.");
+      return;
+    }
 
     const p = players.find(p => p.id === id);
+    if (!p) return;
+
+    const role = roles[id];
+
     modalTitle.textContent = p.name;
 
-    if (roles[id] === "IMPOSTOR") {
-      modalRole.textContent = "Eres el IMPOSTOR 🕵️‍♂️";
+    if (role === "IMPOSTOR") {
+      modalRole.textContent = "IMPOSTOR";
+      modalRole.className = "role impostor";
       modalWord.textContent = "Palabra: ?";
-      modalTip.textContent = "Finge que conoces la palabra. Observa a los sabedores.";
+      modalTip.textContent = "Escucha las pistas y finge que conoces la palabra. No te delates.";
     } else {
-      modalRole.textContent = "Eres SABEDOR ✅";
+      modalRole.textContent = "SABEDOR";
+      modalRole.className = "role sabedor";
       modalWord.textContent = `Palabra: ${secretWord}`;
-      modalTip.textContent = "Da pistas sin revelar la palabra. Intenta encontrar al impostor.";
+      modalTip.textContent = "Habla de la palabra sin decirla literalmente. Observa quién duda demasiado.";
     }
 
     overlay.classList.add("show");
   }
-
-  btnClose.onclick = () => overlay.classList.remove("show");
-  overlay.onclick = e => { if (e.target === overlay) overlay.classList.remove("show"); };
 
   // ===============================
   // EVENTOS
@@ -526,6 +1089,11 @@
   btnAplicarJugadores.onclick = initPlayers;
   btnRepartir.onclick = shuffleRoles;
   btnResetScores.onclick = resetScores;
+  btnClearVotes.onclick = clearVotes;
+  btnComputeRound.onclick = computeRound;
+
+  btnClose.onclick = () => overlay.classList.remove("show");
+  overlay.onclick = e => { if (e.target === overlay) overlay.classList.remove("show"); };
 
   // Inicialización
   initPlayers();
