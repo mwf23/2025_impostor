@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Juego del Impostor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      box-sizing: border-box;
+      max-width: 700px;
+      margin-inline: auto;
+      background: #ffffff;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .info {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      opacity: 0.8;
+    }
+
+    .section {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #F5F7FA;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      flex-wrap: wrap;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: 0.1s;
+    }
+
+    .btn-primary {
+      background: #0079C8;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #0D1846;
+      color: white;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid #0079C8;
+      color: #0079C8;
+    }
+
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 5px 10px;
+      background: #fff;
+      border-radius: 999px;
+      border: 1px solid #ccc;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* MODAL */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.6);
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .card {
+      background: #F5F7FA;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    }
+
+    .role {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+
+    .word {
+      font-size: 1.4rem;
+      margin-top: 8px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Juego del Impostor</h1>
+  <div class="info">Cada jugador debe mirar su rol en secreto 👀</div>
+
+  <!-- ⚙️ CONFIGURACIÓN DE JUGADORES -->
+  <div class="section">
+    <div class="section-title">Jugadores</div>
+    <div class="row">
+      <label>Número (3–10):</label>
+      <input id="numPlayers" type="number" min="3" max="10" value="5">
+      <button id="btnAplicarJugadores" class="btn btn-ghost">Aplicar</button>
+    </div>
+
+    <!-- Inputs de nombres generados dinámicamente -->
+    <div id="playersConfig"></div>
+  </div>
+
+  <!-- 🎭 CATEGORÍAS -->
+  <div class="section">
+    <div class="section-title">Categorías de palabra</div>
+    <small>Si no marcas ninguna, se usarán todas.</small>
+    <div class="categories">
+      <label class="chip"><input class="cat" type="checkbox" value="musica" checked> Música</label>
+      <label class="chip"><input class="cat" type="checkbox" value="historia"> Historia</label>
+      <label class="chip"><input class="cat" type="checkbox" value="geografia"> Geografía</label>
+      <label class="chip"><input class="cat" type="checkbox" value="vida"> Vida cotidiana</label>
+      <label class="chip"><input class="cat" type="checkbox" value="deportes"> Deportes</label>
+      <label class="chip"><input class="cat" type="checkbox" value="naturaleza"> Naturaleza</label>
+      <label class="chip"><input class="cat" type="checkbox" value="viajes"> Viajes</label>
+    </div>
+  </div>
+
+  <!-- 🔀 REPARTIR -->
+  <div style="text-align:center; margin-top:10px;">
+    <button id="btnRepartir" class="btn btn-primary">🔀 Repartir roles</button>
+  </div>
+
+  <div id="status" style="text-align:center; margin-top:10px;">
+    Configura los jugadores y pulsa <b>Repartir roles</b>.
+  </div>
+
+  <!-- 👤 BOTONES DE JUGADORES -->
+  <div class="section">
+    <div class="section-title">Ver rol</div>
+    <div id="playersButtons" class="players-grid"></div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="overlay" class="overlay">
+    <div class="card">
+      <h3 id="modalTitle"></h3>
+      <div id="modalRole" class="role"></div>
+      <div id="modalWord" class="word"></div>
+      <p id="modalTip"></p>
+      <button id="btnClose" class="btn btn-primary" style="margin-top:16px;">Ocultar</button>
+    </div>
+  </div>
+
+<script>
+  // ===============================
+  // DATOS DE PALABRAS POR CATEGORÍA
+  // ===============================
+  const WORDS = {
+    musica: ["CONCIERTO","GUITARRA","BATERÍA","MICRÓFONO","DISCO","FESTIVAL","KARAOKE"],
+    historia: ["CASTILLO","IMPERIO","REVOLUCIÓN","BATALLA","MUSEO","PIRÁMIDE","REY"],
+    geografia: ["MONTAÑA","ISLA","DESIERTO","OCÉANO","FRONTERA","CAPITAL","VOLCÁN"],
+    vida: ["SUPERMERCADO","OFICINA","COLEGIO","MÉDICO","AUTOBÚS","RESTAURANTE","PARQUE"],
+    deportes: ["ESTADIO","BALONCESTO","FÚTBOL","MARATÓN","TENIS","GIMNASIO","NATACIÓN"],
+    naturaleza: ["BOSQUE","RÍO","PLAYA","CASCADA","ANIMAL","JARDÍN","CIELO"],
+    viajes: ["AEROPUERTO","HOTEL","MALETA","TREN","CARAVANA","MAPA","CAMPING"]
+  };
+
+  // ===============================
+  // ESTADO
+  // ===============================
+  let players = [];
+  let roles = {};
+  let secretWord = "";
+  let rolesAssigned = false;
+
+  const numPlayersInput = document.getElementById("numPlayers");
+  const btnAplicarJugadores = document.getElementById("btnAplicarJugadores");
+  const playersConfigDiv = document.getElementById("playersConfig");
+  const playersButtonsDiv = document.getElementById("playersButtons");
+
+  const statusEl = document.getElementById("status");
+  const btnRepartir = document.getElementById("btnRepartir");
+
+  const overlay = document.getElementById("overlay");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalRole = document.getElementById("modalRole");
+  const modalWord = document.getElementById("modalWord");
+  const modalTip = document.getElementById("modalTip");
+  const btnClose = document.getElementById("btnClose");
+
+  // ===============================
+  // NORMALIZAR NÚMERO DE JUGADORES
+  // ===============================
+  function getPlayerCount() {
+    let n = parseInt(numPlayersInput.value, 10);
+    if (isNaN(n)) n = 5;
+    n = Math.max(3, Math.min(10, n));
+    numPlayersInput.value = n;
+    return n;
+  }
+
+  // ===============================
+  // INICIALIZAR JUGADORES
+  // ===============================
+  function initPlayers() {
+    const count = getPlayerCount();
+    players = [];
+    playersConfigDiv.innerHTML = "";
+    playersButtonsDiv.innerHTML = "";
+
+    for (let i = 1; i <= count; i++) {
+      const name = `Jugador ${i}`;
+      players.push({ id: i, name });
+
+      // Input de nombre
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const label = document.createElement("label");
+      label.textContent = `Nombre ${i}:`;
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = name;
+      input.dataset.id = i;
+
+      input.addEventListener("input", () => {
+        const p = players.find(p => p.id === i);
+        p.name = input.value.trim() || `Jugador ${i}`;
+        renderPlayerButtons();
+      });
+
+      row.appendChild(label);
+      row.appendChild(input);
+      playersConfigDiv.appendChild(row);
+    }
+
+    renderPlayerButtons();
+    statusEl.innerHTML = `Configurados <b>${count}</b> jugadores.`;
+  }
+
+  // ===============================
+  // BOTONES PARA VER ROL
+  // ===============================
+  function renderPlayerButtons() {
+    playersButtonsDiv.innerHTML = "";
+    players.forEach(p => {
+      const btn = document.createElement("button");
+      btn.className = "btn btn-secondary";
+      btn.textContent = p.name;
+      btn.onclick = () => showRole(p.id);
+      playersButtonsDiv.appendChild(btn);
+    });
+  }
+
+  // ===============================
+  // FUSIÓN DE CATEGORÍAS
+  // ===============================
+  function chooseWord() {
+    const selected = [...document.querySelectorAll(".cat:checked")].map(cb => cb.value);
+    const categories = selected.length ? selected : Object.keys(WORDS);
+
+    let pool = [];
+    categories.forEach(cat => pool.push(...WORDS[cat]));
+
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  // ===============================
+  // REPARTIR ROLES
+  // ===============================
+  function shuffleRoles() {
+    const n = players.length;
+    if (n < 3) return alert("Necesitas mínimo 3 jugadores.");
+
+    secretWord = chooseWord();
+
+    const impostorIndex = Math.floor(Math.random() * n);
+    const impostorId = players[impostorIndex].id;
+
+    roles = {};
+    players.forEach(p => {
+      roles[p.id] = (p.id === impostorId) ? "IMPOSTOR" : "SABEDOR";
+    });
+
+    rolesAssigned = true;
+    statusEl.innerHTML = `Roles repartidos. Hay <b>${n - 1}</b> sabedores y <b>1 impostor</b>.`;
+  }
+
+  // ===============================
+  // MOSTRAR ROL EN MODAL
+  // ===============================
+  function showRole(id) {
+    if (!rolesAssigned) return alert("Primero reparte roles.");
+
+    const p = players.find(p => p.id === id);
+    modalTitle.textContent = p.name;
+
+    if (roles[id] === "IMPOSTOR") {
+      modalRole.textContent = "Eres el IMPOSTOR 🕵️‍♂️";
+      modalWord.textContent = "Palabra: ?";
+      modalTip.textContent = "Finge que conoces la palabra. Observa a los sabedores.";
+    } else {
+      modalRole.textContent = "Eres SABEDOR ✅";
+      modalWord.textContent = `Palabra: ${secretWord}`;
+      modalTip.textContent = "Da pistas sin revelar la palabra. Intenta encontrar al impostor.";
+    }
+
+    overlay.classList.add("show");
+  }
+
+  btnClose.onclick = () => overlay.classList.remove("show");
+  overlay.onclick = e => { if (e.target === overlay) overlay.classList.remove("show"); };
+
+  // ===============================
+  // EVENTOS
+  // ===============================
+  btnAplicarJugadores.onclick = initPlayers;
+  btnRepartir.onclick = shuffleRoles;
+
+  // Inicialización
+  initPlayers();
+</script>
+
+</body>
+</html>
