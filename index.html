@@ -378,7 +378,7 @@
       color: var(--muted);
     }
 
-    /* Flujo de ronda + timer */
+    /* Wizard 6 pasos + timer */
     .round-steps {
       display: flex;
       flex-wrap: wrap;
@@ -393,10 +393,6 @@
       font-size: 0.75rem;
       color: var(--muted);
       background: rgba(0,0,0,0.22);
-    }
-
-    .step-chip span {
-      opacity: 0.9;
     }
 
     .step-active {
@@ -421,6 +417,12 @@
       font-size: 0.8rem;
       color: #ffdede;
       margin-top: 3px;
+    }
+
+    #btnPlayAgain {
+      margin-top: 8px;
+      width: 100%;
+      justify-content: center;
     }
 
     /* MODAL */
@@ -552,7 +554,7 @@
                 <span class="icon">⚙️</span>
                 <span>Jugadores</span>
               </div>
-              <div class="card-sub">Edita número de jugadores y nombres.</div>
+              <div class="card-sub">Etapa 1 · Configura número de jugadores y nombres.</div>
             </div>
             <span class="pill">Ronda local</span>
           </div>
@@ -574,7 +576,7 @@
                 <span class="icon">🎯</span>
                 <span>Categorías de palabra</span>
               </div>
-              <div class="card-sub">El impostor no verá la palabra. Los demás sí.</div>
+              <div class="card-sub">Etapa 2 · Elige qué tipo de palabras queréis usar.</div>
             </div>
           </div>
           <div class="categories">
@@ -596,7 +598,7 @@
                 <span class="icon">🃏</span>
                 <span>Roles de la ronda</span>
               </div>
-              <div class="card-sub">Reparte y pasa el móvil de mano en mano.</div>
+              <div class="card-sub">Etapa 3 · Reparte roles y deja que cada uno mire el suyo.</div>
             </div>
             <button id="btnRepartir" class="btn btn-primary">
               <span>🔀</span> <span>Repartir roles</span>
@@ -613,7 +615,7 @@
           </div>
         </div>
 
-        <!-- Flujo de ronda + temporizador con sorteo -->
+        <!-- Wizard 6 pasos + temporizador con sorteo -->
         <div class="card">
           <div class="card-header">
             <div>
@@ -621,15 +623,17 @@
                 <span class="icon">⏱️</span>
                 <span>Flujo de ronda & temporizador</span>
               </div>
-              <div class="card-sub">Sortea quién empieza y controla el tiempo de pistas.</div>
+              <div class="card-sub">Etapas 4–6 · Pistas, votación y resultado.</div>
             </div>
           </div>
 
           <div class="round-steps">
-            <div id="step1Chip" class="step-chip"><span>1 · Repartir roles</span></div>
-            <div id="step2Chip" class="step-chip"><span>2 · Ronda de pistas</span></div>
-            <div id="step3Chip" class="step-chip"><span>3 · Votación</span></div>
-            <div id="step4Chip" class="step-chip"><span>4 · Resultado</span></div>
+            <div id="step1Chip" class="step-chip">1 · Configurar jugadores</div>
+            <div id="step2Chip" class="step-chip">2 · Elegir categorías</div>
+            <div id="step3Chip" class="step-chip">3 · Repartir roles & ver rol</div>
+            <div id="step4Chip" class="step-chip">4 · Sorteo & pistas</div>
+            <div id="step5Chip" class="step-chip">5 · Votación</div>
+            <div id="step6Chip" class="step-chip">6 · Resultado & puntos</div>
           </div>
 
           <div class="row" style="align-items:flex-start;">
@@ -657,7 +661,7 @@
                 <span class="icon">🗳️</span>
                 <span>Votación de la ronda</span>
               </div>
-              <div class="card-sub">Cada jugador acusa a quién cree que es el impostor.</div>
+              <div class="card-sub">Etapa 5 · Cada jugador acusa a quién cree que es el impostor.</div>
             </div>
             <span class="pill accent">Auto-cálculo de puntos</span>
           </div>
@@ -674,6 +678,9 @@
           </div>
 
           <div id="roundResult" style="display:none;"></div>
+          <button id="btnPlayAgain" class="btn btn-ghost btn-small" style="display:none;">
+            🔁 Volver a jugar
+          </button>
         </div>
       </div>
 
@@ -718,11 +725,12 @@
           </div>
           <div style="font-size:0.8rem;color:var(--muted);line-height:1.45;">
             <ol style="padding-left:18px;margin:0;">
-              <li>Pulsa <b>Repartir roles</b>. Un jugador será el impostor (no ve la palabra).</li>
-              <li>Cada jugador pulsa su nombre y mira su rol en secreto.</li>
-              <li>Pulsa <b>🎲 Sortear inicio + iniciar</b>: se elige quién empieza y arranca el temporizador.</li>
-              <li>Cuando acabe el tiempo, todos votan en la sección de <b>Votación</b>.</li>
-              <li>Pulsa <b>Calcular resultado</b> y se actualizarán las puntuaciones.</li>
+              <li>Etapa 1: Configura cuántos jugadores sois y sus nombres.</li>
+              <li>Etapa 2: Marca las categorías de palabras que queréis usar.</li>
+              <li>Etapa 3: Pulsa <b>Repartir roles</b> y que cada uno mire su rol en secreto.</li>
+              <li>Etapa 4: Pulsa <b>🎲 Sortear inicio + iniciar</b> y jugad la ronda de pistas.</li>
+              <li>Etapa 5: Cada jugador registra su voto en la sección de <b>Votación</b>.</li>
+              <li>Etapa 6: Pulsa <b>Calcular resultado</b>, se asignan los puntos y podrás <b>Volver a jugar</b>.</li>
             </ol>
           </div>
         </div>
@@ -794,11 +802,11 @@
   let secretWord = "";
   let rolesAssigned = false;
 
-  const TIMER_DEFAULT = 45; // segundos
+  const TIMER_DEFAULT = 180; // segundos
   let timerId = null;
   let timerRemaining = TIMER_DEFAULT;
   let startingPlayer = null;
-  let roundStep = 1; // 1=repartir, 2=pistas, 3=votación, 4=resultado
+  let roundStep = 1; // 1..6
 
   // ===============================
   // REFERENCIAS DOM
@@ -812,6 +820,7 @@
   const btnResetScores      = document.getElementById("btnResetScores");
   const btnClearVotes       = document.getElementById("btnClearVotes");
   const btnComputeRound     = document.getElementById("btnComputeRound");
+  const btnPlayAgain        = document.getElementById("btnPlayAgain");
 
   const statusEl   = document.getElementById("status");
   const btnRepartir = document.getElementById("btnRepartir");
@@ -828,6 +837,8 @@
   const step2Chip = document.getElementById("step2Chip");
   const step3Chip = document.getElementById("step3Chip");
   const step4Chip = document.getElementById("step4Chip");
+  const step5Chip = document.getElementById("step5Chip");
+  const step6Chip = document.getElementById("step6Chip");
 
   const timerDisplay = document.getElementById("timerDisplay");
   const timerStatus = document.getElementById("timerStatus");
@@ -867,7 +878,9 @@
       { chip: step1Chip, num: 1 },
       { chip: step2Chip, num: 2 },
       { chip: step3Chip, num: 3 },
-      { chip: step4Chip, num: 4 }
+      { chip: step4Chip, num: 4 },
+      { chip: step5Chip, num: 5 },
+      { chip: step6Chip, num: 6 }
     ];
     map.forEach(({chip, num}) => {
       if (!chip) return;
@@ -885,7 +898,6 @@
     timerDisplay.textContent = formatTime(timerRemaining);
     timerStatus.textContent = "Pulsa el botón para iniciar la ronda de pistas.";
     startingPlayerLabel.textContent = "";
-    updateRoundStep(1);
   }
 
   // ===============================
@@ -936,7 +948,9 @@
     renderVotesUI();
     roundResult.style.display = "none";
     roundResult.textContent = "";
+    btnPlayAgain.style.display = "none";
     initTimerUI();
+    updateRoundStep(1);
   }
 
   // ===============================
@@ -1045,6 +1059,11 @@
         select.appendChild(opt);
       });
 
+      // Cuando alguien vota, marcamos etapa 5
+      select.addEventListener("change", () => {
+        if (roundStep < 5) updateRoundStep(5);
+      });
+
       row.appendChild(nameEl);
       row.appendChild(select);
       votesTableDiv.appendChild(row);
@@ -1056,6 +1075,8 @@
     selects.forEach(s => s.value = "");
     roundResult.style.display = "none";
     roundResult.textContent = "";
+    btnPlayAgain.style.display = "none";
+    if (roundStep >= 5) updateRoundStep(5);
   }
 
   function computeRound() {
@@ -1124,7 +1145,8 @@
     renderScores();
     roundResult.style.display = "block";
     roundResult.innerHTML = resultText;
-    updateRoundStep(4);
+    btnPlayAgain.style.display = "inline-flex";
+    updateRoundStep(6);
   }
 
   // ===============================
@@ -1153,7 +1175,7 @@
       `Roles repartidos. Hay <b>${n - 1}</b> sabedores y <b>1 impostor</b>. ` +
       `Jugad las pistas y luego rellenad la votación.`;
     initTimerUI();
-    updateRoundStep(1);
+    updateRoundStep(3);
   }
 
   function showRole(id) {
@@ -1185,7 +1207,7 @@
   }
 
   // ===============================
-  // TEMPORIZADOR + SORTEO INICIO
+  // TEMPORIZADOR + SORTEO INICIO (Etapa 4)
   // ===============================
   function startRoundTimer() {
     if (!rolesAssigned) {
@@ -1199,7 +1221,6 @@
       timerId = null;
     }
 
-    // Sorteo aleatorio del jugador que empieza
     const idx = Math.floor(Math.random() * players.length);
     startingPlayer = players[idx];
     startingPlayerLabel.textContent = `🎲 Empieza la ronda de pistas: ${startingPlayer.name}`;
@@ -1208,7 +1229,7 @@
     timerDisplay.textContent = formatTime(timerRemaining);
     timerStatus.textContent = "Ronda de pistas en curso...";
 
-    updateRoundStep(2);
+    updateRoundStep(4);
 
     timerId = setInterval(() => {
       timerRemaining--;
@@ -1218,7 +1239,7 @@
         timerStatus.textContent = "⏱️ Tiempo terminado. Pasad a la votación.";
         clearInterval(timerId);
         timerId = null;
-        updateRoundStep(3);
+        updateRoundStep(5);
       } else {
         timerDisplay.textContent = formatTime(timerRemaining);
       }
@@ -1227,16 +1248,36 @@
 
   function resetTimer() {
     initTimerUI();
+    if (roundStep > 3 && roundStep < 6) {
+      updateRoundStep(4);
+    }
+  }
+
+  // ===============================
+  // NUEVA RONDA (Volver a jugar)
+  // ===============================
+  function newRound() {
+    clearVotes();
+    roundResult.style.display = "none";
+    roundResult.textContent = "";
+    btnPlayAgain.style.display = "none";
+    initTimerUI();
+    shuffleRoles(); // mantiene jugadores y puntuaciones, pero nuevos roles/palabra
   }
 
   // ===============================
   // EVENTOS
   // ===============================
-  btnAplicarJugadores.onclick = initPlayers;
+  btnAplicarJugadores.onclick = () => {
+    initPlayers();
+    updateRoundStep(2); // tras configurar, sugerimos pasar a categorías
+  };
+
   btnRepartir.onclick = shuffleRoles;
   btnResetScores.onclick = resetScores;
   btnClearVotes.onclick = clearVotes;
   btnComputeRound.onclick = computeRound;
+  btnPlayAgain.onclick = newRound;
 
   btnStartTimer.onclick = startRoundTimer;
   btnResetTimer.onclick = resetTimer;
