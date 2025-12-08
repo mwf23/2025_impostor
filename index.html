@@ -425,7 +425,7 @@
       justify-content: center;
     }
 
-    /* MODAL */
+    /* OVERLAY WIDGET ETAPA 3 */
     .overlay {
       position: fixed;
       inset: 0;
@@ -434,21 +434,23 @@
       align-items: center;
       background: radial-gradient(circle at top, rgba(77,171,247,0.22), rgba(0,0,0,0.92));
       z-index: 20;
+      padding: 16px;
     }
 
     .overlay.show { display: flex; }
 
     .card-modal {
-      background: radial-gradient(circle at top, rgba(77,171,247,0.15), rgba(6,8,30,1));
-      padding: 22px 18px 18px;
+      background: radial-gradient(circle at top, rgba(77,171,247,0.18), rgba(6,8,30,1));
+      padding: 18px 16px 16px;
       border-radius: 20px;
-      width: 90%;
-      max-width: 320px;
+      width: 100%;
+      max-width: 420px;
+      max-height: 100%;
       box-shadow: var(--shadow-soft);
       border: 1px solid rgba(255,255,255,0.14);
       text-align: center;
       position: relative;
-      overflow: hidden;
+      overflow-y: auto;
     }
 
     .card-modal::before {
@@ -458,16 +460,23 @@
       background:
         radial-gradient(circle at 10% 0%, rgba(255,255,255,0.18), transparent 55%),
         radial-gradient(circle at 120% 120%, rgba(255,107,107,0.28), transparent 55%);
-      opacity: 0.6;
+      opacity: 0.45;
       pointer-events: none;
     }
 
     .modal-inner { position: relative; z-index: 1; }
 
+    .modal-step-title {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0 0 4px;
+    }
+
     #modalTitle {
       margin: 0 0 4px;
-      font-size: 1rem;
+      font-size: 1.05rem;
       letter-spacing: 0.02em;
+      font-weight: 600;
     }
 
     .modal-tag {
@@ -480,35 +489,50 @@
       background: rgba(0,0,0,0.3);
       border: 1px solid rgba(255,255,255,0.18);
       color: var(--muted);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .role {
       font-size: 1.2rem;
       font-weight: 700;
-      margin: 10px 0 6px;
+      margin: 8px 0 4px;
+      min-height: 1.5em;
     }
 
     .role.impostor { color: var(--accent); }
     .role.sabedor { color: #7ee3ff; }
 
     .word {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       margin-top: 4px;
       font-weight: 700;
       letter-spacing: 0.04em;
+      min-height: 1.5em;
     }
 
     #modalTip {
       font-size: 0.8rem;
       color: var(--muted);
       margin-top: 8px;
+      min-height: 2.4em;
     }
 
-    #btnClose {
-      margin-top: 14px;
-      width: 100%;
-      justify-content: center;
+    .modal-divider {
+      margin: 10px 0 6px;
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .modal-players-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-align: left;
+    }
+
+    #rolesPlayersGrid .player-btn {
+      font-size: 0.84rem;
+      padding: 7px 8px;
     }
 
     footer {
@@ -611,7 +635,7 @@
 
           <div id="playersButtons" class="players-grid"></div>
           <div class="hint">
-            👉 Cada jugador pulsa su nombre, mira su rol, y toca “Ocultar” antes de devolver el móvil.
+            👉 Tras repartir, se abrirá un widget en primer plano para que cada jugador vea su rol.
           </div>
         </div>
 
@@ -630,7 +654,7 @@
           <div class="round-steps">
             <div id="step1Chip" class="step-chip">1 · Configurar jugadores</div>
             <div id="step2Chip" class="step-chip">2 · Elegir categorías</div>
-            <div id="step3Chip" class="step-chip">3 · Repartir roles & ver rol</div>
+            <div id="step3Chip" class="step-chip">3 · Repartir roles</div>
             <div id="step4Chip" class="step-chip">4 · Sorteo & pistas</div>
             <div id="step5Chip" class="step-chip">5 · Votación</div>
             <div id="step6Chip" class="step-chip">6 · Resultado & puntos</div>
@@ -727,7 +751,7 @@
             <ol style="padding-left:18px;margin:0;">
               <li>Etapa 1: Configura cuántos jugadores sois y sus nombres.</li>
               <li>Etapa 2: Marca las categorías de palabras que queréis usar.</li>
-              <li>Etapa 3: Pulsa <b>Repartir roles</b> y que cada uno mire su rol en secreto.</li>
+              <li>Etapa 3: Pulsa <b>Repartir roles</b> y usa el widget para que cada uno vea su rol.</li>
               <li>Etapa 4: Pulsa <b>🎲 Sortear inicio + iniciar</b> y jugad la ronda de pistas.</li>
               <li>Etapa 5: Cada jugador registra su voto en la sección de <b>Votación</b>.</li>
               <li>Etapa 6: Pulsa <b>Calcular resultado</b>, se asignan los puntos y podrás <b>Volver a jugar</b>.</li>
@@ -742,19 +766,31 @@
     </footer>
   </div>
 
-  <!-- MODAL ROL -->
+  <!-- WIDGET EN PRIMER PLANO · ETAPA 3 -->
   <div id="overlay" class="overlay">
     <div class="card-modal">
       <div class="modal-inner">
-        <p id="modalTitle"></p>
+        <p class="modal-step-title">Etapa 3 · Repartir roles</p>
+        <p id="modalTitle">Selecciona tu nombre</p>
         <div class="modal-tag">
           <span>👁️</span>
-          <span>Solo tú deberías ver esto</span>
+          <span>Solo el jugador actual debe mirar la pantalla</span>
         </div>
         <div id="modalRole" class="role"></div>
         <div id="modalWord" class="word"></div>
         <p id="modalTip"></p>
-        <button id="btnClose" class="btn btn-primary">👁‍🗨 Ocultar y pasar móvil</button>
+        <button id="btnHideRole" class="btn btn-secondary" style="margin-top:8px;width:100%;">
+          🙈 Ocultar rol para el siguiente
+        </button>
+
+        <hr class="modal-divider" />
+
+        <div class="modal-players-label">Pulsa tu nombre para ver tu rol:</div>
+        <div id="rolesPlayersGrid" class="players-grid"></div>
+
+        <button id="btnClose" class="btn btn-primary" style="margin-top:10px;width:100%;">
+          ✅ Cerrar etapa 3
+        </button>
       </div>
     </div>
   </div>
@@ -830,7 +866,9 @@
   const modalRole  = document.getElementById("modalRole");
   const modalWord  = document.getElementById("modalWord");
   const modalTip   = document.getElementById("modalTip");
+  const btnHideRole = document.getElementById("btnHideRole");
   const btnClose   = document.getElementById("btnClose");
+  const rolesPlayersGrid = document.getElementById("rolesPlayersGrid");
   const roundResult = document.getElementById("roundResult");
 
   const step1Chip = document.getElementById("step1Chip");
@@ -900,6 +938,14 @@
     startingPlayerLabel.textContent = "";
   }
 
+  function resetDisplayedRole() {
+    modalTitle.textContent = "Selecciona tu nombre";
+    modalRole.textContent = "";
+    modalRole.className = "role";
+    modalWord.textContent = "";
+    modalTip.textContent = "Pulsa tu nombre para ver tu rol. Cuando termines, toca \"Ocultar rol\" antes de pasar el móvil.";
+  }
+
   // ===============================
   // INICIALIZACIÓN DE JUGADORES
   // ===============================
@@ -932,6 +978,7 @@
         renderPlayerButtons();
         renderScores();
         renderVotesUI();
+        renderRolesWidgetPlayers();
       });
 
       row.appendChild(label);
@@ -946,6 +993,7 @@
     renderPlayerButtons();
     renderScores();
     renderVotesUI();
+    renderRolesWidgetPlayers();
     roundResult.style.display = "none";
     roundResult.textContent = "";
     btnPlayAgain.style.display = "none";
@@ -954,7 +1002,7 @@
   }
 
   // ===============================
-  // BOTONES PARA VER ROL
+  // BOTONES PARA VER ROL (columna principal)
   // ===============================
   function renderPlayerButtons() {
     playersButtonsDiv.innerHTML = "";
@@ -965,6 +1013,26 @@
       btn.onclick = () => showRole(p.id);
       playersButtonsDiv.appendChild(btn);
     });
+  }
+
+  // ===============================
+  // BOTONES JUGADORES EN WIDGET ETAPA 3
+  // ===============================
+  function renderRolesWidgetPlayers() {
+    rolesPlayersGrid.innerHTML = "";
+    players.forEach(p => {
+      const btn = document.createElement("button");
+      btn.className = "btn player-btn";
+      btn.innerHTML = `<span>👤</span><span>${p.name}</span>`;
+      btn.onclick = () => showRole(p.id);
+      rolesPlayersGrid.appendChild(btn);
+    });
+  }
+
+  function openRolesWidget() {
+    resetDisplayedRole();
+    renderRolesWidgetPlayers();
+    overlay.classList.add("show");
   }
 
   // ===============================
@@ -1059,7 +1127,6 @@
         select.appendChild(opt);
       });
 
-      // Cuando alguien vota, marcamos etapa 5
       select.addEventListener("change", () => {
         if (roundStep < 5) updateRoundStep(5);
       });
@@ -1125,7 +1192,6 @@
     let resultText = "";
 
     if (mostVotedIds.length === 1 && mostVotedIds[0] === impostor.id) {
-      // impostor descubierto
       players.forEach(p => {
         if (roles[p.id] === "SABEDOR" && voterChoice[p.id] === impostor.id) {
           p.score += 2;
@@ -1135,7 +1201,6 @@
         `🕵️‍♂️ El impostor era <b>${impostor.name}</b> y ha sido <b>DESCUBIERTO</b>.<br>` +
         `Cada sabedor que le ha votado correctamente gana <b>+2 puntos</b>.`;
     } else {
-      // impostor se escapa
       impostor.score += 3;
       resultText =
         `😈 El impostor era <b>${impostor.name}</b> y se ha <b>ESCAPADO</b>.<br>` +
@@ -1173,9 +1238,10 @@
     clearVotes();
     statusEl.innerHTML =
       `Roles repartidos. Hay <b>${n - 1}</b> sabedores y <b>1 impostor</b>. ` +
-      `Jugad las pistas y luego rellenad la votación.`;
+      `Usad el widget de etapa 3 para ver vuestros roles.`;
     initTimerUI();
     updateRoundStep(3);
+    openRolesWidget();
   }
 
   function showRole(id) {
@@ -1282,6 +1348,7 @@
   btnStartTimer.onclick = startRoundTimer;
   btnResetTimer.onclick = resetTimer;
 
+  btnHideRole.onclick = resetDisplayedRole;
   btnClose.onclick = () => overlay.classList.remove("show");
   overlay.onclick = e => { if (e.target === overlay) overlay.classList.remove("show"); };
 
